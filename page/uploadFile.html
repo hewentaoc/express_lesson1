@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        function upload() {
+            let value = document.getElementById('name').value;
+            let fileValue = document.getElementById('file').files[0];
+            let form = new FormData();
+            form.append('name',value);
+            form.append('file',fileValue);
+            let xhr = new XMLHttpRequest();
+            xhr.open('post','/uploadFile',true);
+            xhr.onload = function () {
+                alert('上传成功！');
+            }
+            xhr.onreadystatechange = function () {
+                if(xhr.readyState == 4 && xhr.status == 200){
+                    console.log(xhr.responseText);
+                    console.log(JSON.parse(xhr.responseText));
+                    /* 渲染图片 */
+                    let img = document.getElementById('pic');
+                    img.src = '/getPic?path='+ JSON.parse(xhr.responseText).path;
+                    /* 下载图片 */
+                    let dw = document.getElementById('download');
+                    dw.href = '/getPic?path='+ JSON.parse(xhr.responseText).path;
+                }
+            }
+            /* 上传图片 */
+            xhr.send(form);
+        }
+    </script>
+</head>
+<body>
+    <input type="text" name="name" id="name" placeholder="用户名">
+    <input type="file" name="file" id="file" placeholder="上传文件">
+    <input type="submit" value="上传" id="submit" onclick="upload()">
+    <img src="#" alt="" id="pic">
+    <!-- download属性用以下载文件 -->
+    <a href="#" download="he.jpg" id="download">下载图片</a>
+</body>
+</html>
